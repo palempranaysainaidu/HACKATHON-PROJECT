@@ -1,11 +1,11 @@
 import { useState, useEffect } from 'react';
-import axios from '../../api/axiosInstance';
-import { useNavigate } from 'react-router-dom';
-import { ArrowRight, Zap, X } from 'lucide-react';
+import { ArrowRight, Zap, X, Eye, EyeOff } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
+import { useNavigate } from 'react-router-dom';
 
 export default function AuthModal({ isOpen, onClose, defaultIsLogin = true }) {
   const { login, register } = useAuth();
+  const navigate = useNavigate();
   const [isLogin, setIsLogin] = useState(defaultIsLogin);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -13,12 +13,23 @@ export default function AuthModal({ isOpen, onClose, defaultIsLogin = true }) {
   const [role, setRole] = useState('organizer');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
-  
+  const [showPassword, setShowPassword] = useState(false);
+  const [visible, setVisible] = useState(false);
+
   useEffect(() => {
-    if (isOpen) setIsLogin(defaultIsLogin);
+    if (isOpen) {
+      setIsLogin(defaultIsLogin);
+      setError('');
+      setTimeout(() => setVisible(true), 10);
+    } else {
+      setVisible(false);
+    }
   }, [isOpen, defaultIsLogin]);
-  
-  const navigate = useNavigate();
+
+  const handleClose = () => {
+    setVisible(false);
+    setTimeout(onClose, 250);
+  };
 
   if (!isOpen) return null;
 
@@ -29,90 +40,165 @@ export default function AuthModal({ isOpen, onClose, defaultIsLogin = true }) {
     try {
       if (isLogin) {
         const user = await login(email, password);
-        navigate(`/${user.user.role}/dashboard`);
-        onClose();
+        handleClose();
+        setTimeout(() => navigate(`/${user.user.role}/dashboard`), 260);
       } else {
         const user = await register({ name, email, password, role });
-        navigate(`/${user.user.role}/dashboard`);
-        onClose();
+        handleClose();
+        setTimeout(() => navigate(`/${user.user.role}/dashboard`), 260);
       }
     } catch (err) {
-      setError(err.response?.data?.message || 'Authentication failed');
+      setError(err.response?.data?.message || 'Authentication failed. Please try again.');
     } finally {
       setLoading(false);
     }
   };
 
+  const ROLES = [
+    { value: 'organizer', label: 'Event Organizer', desc: 'Create & manage events' },
+    { value: 'volunteer', label: 'Volunteer', desc: 'Join & assist events' },
+    { value: 'attendee', label: 'Attendee', desc: 'Discover & attend events' },
+  ];
+
   return (
-    <div 
-      className="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 animate-fade-in"
-      onClick={onClose}
+    <div
+      className={`fixed inset-0 z-[100] flex items-center justify-center p-4 transition-all duration-250 ${visible ? 'opacity-100' : 'opacity-0'}`}
+      onClick={handleClose}
     >
-      <div 
-        className="w-full max-w-lg bg-white border border-brand-border shadow-2xl relative flex flex-col justify-center animate-fade-in-up"
+      {/* Backdrop */}
+      <div className="absolute inset-0 bg-black/70 backdrop-blur-md" />
+
+      {/* Panel */}
+      <div
+        className={`relative w-full max-w-md z-10 transition-all duration-300 ${visible ? 'opacity-100 translate-y-0 scale-100' : 'opacity-0 translate-y-6 scale-95'}`}
         onClick={e => e.stopPropagation()}
       >
-        <div className="p-10 sm:p-12 w-full">
-           <div className="mb-10 text-center md:text-left">
-             <h2 className="text-3xl font-serif font-black text-brand-black mb-2 tracking-tight">
-               {isLogin ? 'Sign In.' : 'Sign Up.'}
-             </h2>
-             <p className="text-brand-mid font-sans text-sm leading-relaxed">
-               {isLogin ? 'Provide your credentials to access your dashboard.' : 'Create an account to begin managing events.'}
-             </p>
-           </div>
-           
-           {error && <div className="bg-brand-error/10 border border-brand-error/20 text-brand-error p-4 mb-6 text-sm font-sans font-medium flex items-center break-words"><Zap className="w-4 h-4 mr-2 shrink-0" /> {error}</div>}
-           
-           <form onSubmit={handleSubmit} className="space-y-6">
-             {!isLogin && (
-               <div>
-                 <label className="block text-xs font-bold uppercase tracking-[0.1em] text-brand-mid mb-2">Full Name</label>
-                 <input type="text" value={name} onChange={e => setName(e.target.value)} required className="w-full bg-brand-surface border border-brand-border px-4 py-3 font-sans text-sm text-brand-black placeholder-gray-400 focus:outline-none focus:ring-1 focus:ring-brand-dark focus:bg-white transition-all shadow-sm" placeholder="e.g. Director Sarah" />
-               </div>
-             )}
-             
-             <div>
-               <label className="block text-xs font-bold uppercase tracking-[0.1em] text-brand-mid mb-2">Email Address</label>
-               <input type="email" value={email} onChange={e => setEmail(e.target.value)} required className="w-full bg-brand-surface border border-brand-border px-4 py-3 font-sans text-sm text-brand-black placeholder-gray-400 focus:outline-none focus:ring-1 focus:ring-brand-dark focus:bg-white transition-all shadow-sm" placeholder="hello@domain.com" />
-             </div>
-             
-             <div>
-               <div className="flex justify-between items-center mb-2">
-                 <label className="block text-xs font-bold uppercase tracking-[0.1em] text-brand-mid">Password</label>
-                 {isLogin && <button type="button" className="text-[10px] font-bold text-brand-dark hover:text-black transition-colors hover:underline tracking-wider uppercase">Forgot?</button>}
-               </div>
-               <input type="password" value={password} onChange={e => setPassword(e.target.value)} required className="w-full bg-brand-surface border border-brand-border px-4 py-3 font-sans text-sm text-brand-black placeholder-gray-400 focus:outline-none focus:ring-1 focus:ring-brand-dark focus:bg-white transition-all shadow-sm" placeholder="••••••••" />
-             </div>
+        {/* Glow ring */}
+        <div className="absolute -inset-px rounded-2xl bg-gradient-to-b from-brand-accent/20 to-transparent pointer-events-none" />
 
-             {!isLogin && (
-               <div>
-                 <label className="block text-xs font-bold uppercase tracking-[0.1em] text-brand-mid mb-2">Account Role</label>
-                 <div className="relative">
-                   <select value={role} onChange={e => setRole(e.target.value)} className="w-full appearance-none bg-brand-surface border border-brand-border px-4 py-3 font-sans text-sm font-medium text-brand-black focus:outline-none focus:ring-1 focus:ring-brand-dark focus:bg-white transition-all shadow-sm cursor-pointer">
-                     <option value="organizer">Organizer</option>
-                     <option value="volunteer">Volunteer</option>
-                     <option value="attendee">Attendee</option>
-                   </select>
-                   <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-brand-mid">
-                     <svg className="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"/></svg>
-                   </div>
-                 </div>
-               </div>
-             )}
-             
-             <button type="submit" disabled={loading} className="w-full bg-brand-black hover:bg-black text-white font-sans font-bold text-sm px-6 py-4 transition-all mt-8 flex items-center justify-center group disabled:opacity-70 disabled:cursor-not-allowed shadow-md">
-               {loading ? 'Processing...' : isLogin ? 'Sign In' : 'Sign Up'}
-               {!loading && <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />}
-             </button>
-           </form>
-           
-           <div className="mt-8 text-center border-t border-brand-border pt-6">
-             <button onClick={() => setIsLogin(!isLogin)} className="text-xs text-brand-mid hover:text-brand-black transition-colors font-bold font-sans uppercase tracking-[0.1em]">
-               {isLogin ? "Need an account? Sign Up" : "Already have an account? Sign In"}
-             </button>
-           </div>
-           
+        <div className="relative bg-brand-surface border border-brand-border rounded-2xl shadow-modal overflow-hidden">
+          {/* Top accent bar */}
+          <div className="h-px bg-gradient-to-r from-transparent via-brand-accent/60 to-transparent" />
+
+          <div className="p-8">
+            {/* Header */}
+            <div className="flex items-start justify-between mb-8">
+              <div>
+                <div className="section-label mb-2">EventOS Platform</div>
+                <h2 className="font-serif text-2xl font-bold text-brand-white">
+                  {isLogin ? 'Welcome back.' : 'Create account.'}
+                </h2>
+                <p className="text-brand-mid font-sans text-sm mt-1.5 leading-relaxed">
+                  {isLogin
+                    ? 'Sign in to access your dashboard and events.'
+                    : 'Join the platform used by 500+ event teams.'}
+                </p>
+              </div>
+              <button
+                onClick={handleClose}
+                className="text-brand-dim hover:text-brand-light transition-colors p-1 -mt-1 -mr-1 rounded-lg hover:bg-white/5"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            {error && (
+              <div className="mb-6 p-3.5 rounded-lg bg-brand-error/10 border border-brand-error/20 flex items-center space-x-2 text-brand-error text-sm font-sans">
+                <Zap className="w-4 h-4 shrink-0" />
+                <span>{error}</span>
+              </div>
+            )}
+
+            <form onSubmit={handleSubmit} className="space-y-5">
+              {!isLogin && (
+                <div>
+                  <label className="block text-xs font-bold uppercase tracking-widest text-brand-mid mb-2">Full Name</label>
+                  <input
+                    type="text" value={name} onChange={e => setName(e.target.value)} required
+                    className="input-field" placeholder="e.g. Priya Sharma"
+                  />
+                </div>
+              )}
+
+              <div>
+                <label className="block text-xs font-bold uppercase tracking-widest text-brand-mid mb-2">Email</label>
+                <input
+                  type="email" value={email} onChange={e => setEmail(e.target.value)} required
+                  className="input-field" placeholder="hello@company.com"
+                />
+              </div>
+
+              <div>
+                <div className="flex justify-between items-center mb-2">
+                  <label className="block text-xs font-bold uppercase tracking-widest text-brand-mid">Password</label>
+                  {isLogin && <button type="button" className="text-[10px] text-brand-accent hover:text-brand-accentHov font-bold uppercase tracking-wider transition-colors">Forgot?</button>}
+                </div>
+                <div className="relative">
+                  <input
+                    type={showPassword ? 'text' : 'password'} value={password} onChange={e => setPassword(e.target.value)} required
+                    className="input-field pr-12" placeholder="••••••••"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-brand-dim hover:text-brand-light transition-colors"
+                  >
+                    {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                  </button>
+                </div>
+              </div>
+
+              {!isLogin && (
+                <div>
+                  <label className="block text-xs font-bold uppercase tracking-widest text-brand-mid mb-3">Account Type</label>
+                  <div className="grid grid-cols-3 gap-2">
+                    {ROLES.map(r => (
+                      <button
+                        key={r.value}
+                        type="button"
+                        onClick={() => setRole(r.value)}
+                        className={`p-3 rounded-lg border text-left transition-all duration-200 ${role === r.value
+                          ? 'border-brand-accent bg-brand-accentLow text-brand-accent'
+                          : 'border-brand-border bg-brand-card text-brand-mid hover:border-brand-muted hover:text-brand-light'
+                        }`}
+                      >
+                        <div className="font-sans font-bold text-xs leading-tight">{r.label}</div>
+                        <div className="font-sans text-[10px] opacity-70 mt-0.5 leading-tight">{r.desc}</div>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              <button
+                type="submit"
+                disabled={loading}
+                className="w-full btn-gold mt-2 flex items-center justify-center group"
+              >
+                {loading ? (
+                  <span className="flex items-center space-x-2">
+                    <span className="w-4 h-4 border-2 border-brand-bg/30 border-t-brand-bg rounded-full animate-spin" />
+                    <span>Processing...</span>
+                  </span>
+                ) : (
+                  <>
+                    {isLogin ? 'Sign In' : 'Create Account'}
+                    <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
+                  </>
+                )}
+              </button>
+            </form>
+
+            <div className="mt-6 pt-5 border-t border-brand-border text-center">
+              <button
+                onClick={() => { setIsLogin(!isLogin); setError(''); }}
+                className="text-xs text-brand-mid hover:text-brand-light font-sans font-medium transition-colors"
+              >
+                {isLogin ? "Don't have an account? " : "Already a member? "}
+                <span className="text-brand-accent hover:text-brand-accentHov font-bold">{isLogin ? 'Sign Up' : 'Sign In'}</span>
+              </button>
+            </div>
+          </div>
         </div>
       </div>
     </div>

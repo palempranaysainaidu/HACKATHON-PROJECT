@@ -6,6 +6,7 @@ export default function BudgetTable({ eventId, expectedAudience, ticketPrice = 0
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [editingItemId, setEditingItemId] = useState(null);
   const [newItem, setNewItem] = useState({ category: 'venue', description: '', estimatedAmount: 0 });
 
   const fetchBudget = async () => {
@@ -25,11 +26,16 @@ export default function BudgetTable({ eventId, expectedAudience, ticketPrice = 0
     } catch (err) { console.error(err); setLoading(false); }
   };
 
-  const handleCreate = async (e) => {
+  const handleSave = async (e) => {
     e.preventDefault();
     try {
-      await axios.post(`/organizer/events/${eventId}/budget`, newItem);
+      if (editingItemId) {
+        await axios.patch(`/organizer/budget/${editingItemId}`, newItem);
+      } else {
+        await axios.post(`/organizer/events/${eventId}/budget`, newItem);
+      }
       setIsModalOpen(false);
+      setEditingItemId(null);
       setNewItem({ category: 'venue', description: '', estimatedAmount: 0 });
       fetchBudget();
     } catch (err) { console.error(err); }
@@ -66,7 +72,7 @@ export default function BudgetTable({ eventId, expectedAudience, ticketPrice = 0
              <button onClick={handleGenerateAI} className="border border-brand-accent text-brand-accent hover:bg-brand-surface font-sans font-medium px-4 py-2 rounded-full transition-colors text-sm">
                 ✨ Auto-Estimate
              </button>
-             <button onClick={() => setIsModalOpen(true)} className="bg-brand-black hover:bg-black text-brand-white font-sans font-medium px-4 py-2 rounded-full transition-colors text-sm inline-flex items-center">
+             <button onClick={() => { setEditingItemId(null); setNewItem({ category: 'venue', description: '', estimatedAmount: 0 }); setIsModalOpen(true); }} className="bg-brand-black hover:bg-black text-brand-white font-sans font-medium px-4 py-2 rounded-full transition-colors text-sm inline-flex items-center">
                 <Plus className="w-4 h-4 mr-1" /> Add Line
              </button>
           </div>
@@ -99,9 +105,12 @@ export default function BudgetTable({ eventId, expectedAudience, ticketPrice = 0
                       )}
                     </button>
                   </td>
-                  <td className="px-6 py-4 text-right">
+                  <td className="px-6 py-4 text-right space-x-3">
                     {!item.isVerified && (
-                      <button onClick={() => handleDelete(item._id)} className="text-brand-light hover:text-brand-error"><Trash2 className="w-4 h-4" /></button>
+                      <>
+                        <button onClick={() => { setEditingItemId(item._id); setNewItem({ category: item.category, description: item.description, estimatedAmount: item.estimatedAmount }); setIsModalOpen(true); }} className="text-brand-mid hover:text-brand-black font-sans text-xs underline uppercase tracking-widest font-bold">Edit</button>
+                        <button onClick={() => handleDelete(item._id)} className="text-brand-light hover:text-brand-error"><Trash2 className="w-4 h-4" /></button>
+                      </>
                     )}
                   </td>
                 </tr>
@@ -144,8 +153,8 @@ export default function BudgetTable({ eventId, expectedAudience, ticketPrice = 0
       {isModalOpen && (
         <div className="fixed inset-0 bg-brand-black/50 flex items-center justify-center z-50">
           <div className="bg-brand-white rounded-xl p-8 w-full max-w-md">
-            <h2 className="font-serif text-2xl font-bold mb-6">Add Expense</h2>
-            <form onSubmit={handleCreate} className="space-y-4">
+            <h2 className="font-serif text-2xl font-bold mb-6">{editingItemId ? 'Edit Expense' : 'Add Expense'}</h2>
+            <form onSubmit={handleSave} className="space-y-4">
               <div>
                 <label className="block text-xs font-medium uppercase tracking-wide text-brand-mid mb-1">Category</label>
                 <select value={newItem.category} onChange={e => setNewItem({...newItem, category: e.target.value})} className="w-full border border-brand-border rounded-lg px-4 py-2 font-sans bg-white">
@@ -161,7 +170,7 @@ export default function BudgetTable({ eventId, expectedAudience, ticketPrice = 0
                 <input required type="number" value={newItem.estimatedAmount} onChange={e => setNewItem({...newItem, estimatedAmount: Number(e.target.value)})} className="w-full border border-brand-border rounded-lg px-4 py-2 font-sans" />
               </div>
               <div className="flex justify-end space-x-3 pt-6">
-                <button type="button" onClick={() => setIsModalOpen(false)} className="px-4 py-2 text-brand-dark font-sans font-medium">Cancel</button>
+                <button type="button" onClick={() => { setIsModalOpen(false); setEditingItemId(null); }} className="px-4 py-2 text-brand-dark font-sans font-medium">Cancel</button>
                 <button type="submit" className="bg-brand-black text-brand-white px-6 py-2 rounded-full font-sans font-medium">Save Item</button>
               </div>
             </form>

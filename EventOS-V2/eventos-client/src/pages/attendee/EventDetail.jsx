@@ -26,7 +26,8 @@ export default function EventDetail() {
     fetchEvent();
   }, [slug]);
 
-  const totalCost = 0 * numberOfGuests + (wantsFood ? 200 * numberOfGuests : 0) + (wantsTransport ? 300 * numberOfGuests : 0);
+  const baseTicketCost = event ? (event.isFree ? 0 : event.ticketPrice) : 0;
+  const totalCost = baseTicketCost * numberOfGuests + (wantsFood ? (event?.foodCost || 200) * numberOfGuests : 0) + (wantsTransport ? (event?.transportCost || 300) * numberOfGuests : 0);
 
   const handleRegister = async () => {
     setRegistering(true);
@@ -80,6 +81,30 @@ export default function EventDetail() {
             </div>
          </div>
 
+         {/* MOCKED BUSINESS PROFILE */}
+         <div className="mt-12 bg-brand-surface border border-brand-border rounded-xl p-8">
+            <h3 className="font-serif text-2xl font-bold text-brand-black mb-4">About the Organizer</h3>
+            <div className="flex items-center space-x-4 mb-4">
+               <div className="w-16 h-16 bg-brand-black rounded-full flex justify-center items-center text-white font-serif text-2xl font-bold uppercase tracking-wider shadow-md">
+                  {(event.organizerId?.organization || 'EV').substring(0,2)}
+               </div>
+               <div>
+                  <h4 className="font-sans font-bold text-lg text-brand-black">{event.organizerId?.organization || 'EventOS Partner Network'}</h4>
+                  <div className="flex items-center space-x-1 text-yellow-500 mb-1 text-sm tracking-widest">
+                     ★★★★☆ <span className="text-brand-mid text-xs font-sans tracking-normal ml-2">(4.8 / 5 from 124 recorded reviews)</span>
+                  </div>
+               </div>
+            </div>
+            <p className="font-sans text-brand-dark text-sm leading-relaxed mb-6">
+              A premier event execution agency specializing in high-fidelity engagements. Renowned for mastering rapid logistics, deploying highly-skilled volunteer networks, and fostering vibrant communities.
+            </p>
+            <div className="grid grid-cols-3 gap-2 text-center border-t border-brand-border pt-4">
+               <div><span className="block font-bold text-brand-black text-xl">15</span><span className="text-[10px] font-bold uppercase tracking-wide text-brand-mid">Events Hosted</span></div>
+               <div><span className="block font-bold text-brand-black text-xl">12k+</span><span className="text-[10px] font-bold uppercase tracking-wide text-brand-mid">Total Attendees</span></div>
+               <div><span className="block font-bold text-brand-black text-xl">98%</span><span className="text-[10px] font-bold uppercase tracking-wide text-brand-mid">Satisfaction Rate</span></div>
+            </div>
+         </div>
+
          {updates.length > 0 && (
            <div className="pt-8">
               <h2 className="font-serif text-2xl font-bold text-brand-black mb-6">Live Announcements</h2>
@@ -115,21 +140,29 @@ export default function EventDetail() {
                </div>
 
                <div className="space-y-3">
-                 <label className="block text-xs font-medium uppercase tracking-wide text-brand-mid mb-2">Optional Add-ons</label>
-                 <div className="flex items-center space-x-3 p-3 border border-brand-border rounded-lg hover:bg-brand-surface cursor-pointer" onClick={() => setWantsFood(!wantsFood)}>
-                   <input type="checkbox" checked={wantsFood} readOnly className="w-5 h-5 accent-brand-accent" />
-                   <div className="flex-1">
-                     <span className="block font-sans font-medium text-sm text-brand-dark">Catering Pass</span>
-                     <span className="block font-sans text-xs text-brand-mid">+ ₹200 / person</span>
+                 {(event.providesFood || event.providesTransport) && (
+                   <label className="block text-xs font-medium uppercase tracking-wide text-brand-mid mb-2">Optional Add-ons</label>
+                 )}
+                 
+                 {event.providesFood && (
+                   <div className="flex items-center space-x-3 p-3 border border-brand-border rounded-lg hover:bg-brand-surface cursor-pointer" onClick={() => setWantsFood(!wantsFood)}>
+                     <input type="checkbox" checked={wantsFood} readOnly className="w-5 h-5 accent-brand-accent flex-shrink-0" />
+                     <div className="flex-1">
+                       <span className="block font-sans font-medium text-sm text-brand-dark">Catering Pass</span>
+                       <span className="block font-sans text-xs text-brand-mid">+ ₹{event.foodCost || 200} / person</span>
+                     </div>
                    </div>
-                 </div>
-                 <div className="flex items-center space-x-3 p-3 border border-brand-border rounded-lg hover:bg-brand-surface cursor-pointer" onClick={() => setWantsTransport(!wantsTransport)}>
-                   <input type="checkbox" checked={wantsTransport} readOnly className="w-5 h-5 accent-brand-accent" />
-                   <div className="flex-1">
-                     <span className="block font-sans font-medium text-sm text-brand-dark">Transport Pass</span>
-                     <span className="block font-sans text-xs text-brand-mid">+ ₹300 / person</span>
+                 )}
+                 
+                 {event.providesTransport && (
+                   <div className="flex items-center space-x-3 p-3 border border-brand-border rounded-lg hover:bg-brand-surface cursor-pointer" onClick={() => setWantsTransport(!wantsTransport)}>
+                     <input type="checkbox" checked={wantsTransport} readOnly className="w-5 h-5 accent-brand-accent flex-shrink-0" />
+                     <div className="flex-1">
+                       <span className="block font-sans font-medium text-sm text-brand-dark">Transport Pass</span>
+                       <span className="block font-sans text-xs text-brand-mid">+ ₹{event.transportCost || 300} / person</span>
+                     </div>
                    </div>
-                 </div>
+                 )}
                </div>
             </div>
 

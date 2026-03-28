@@ -44,14 +44,18 @@ export default function EventCatalog() {
                 <h3 className="font-serif text-2xl font-bold text-brand-black mb-2 line-clamp-1">{event.name}</h3>
                 <p className="font-sans text-sm text-brand-mid mb-4 flex-1 line-clamp-2">{event.description}</p>
                 
-                <div className="grid grid-cols-2 gap-4 text-sm font-sans mb-6 border-y border-brand-border py-4">
+                <div className="grid grid-cols-3 gap-2 text-sm font-sans mb-6 border-y border-brand-border py-4">
                   <div>
-                    <span className="block text-brand-mid font-medium text-xs uppercase tracking-wider mb-1">Date</span>
+                    <span className="block text-brand-mid font-medium text-[10px] uppercase tracking-wider mb-1">Date</span>
                     <span className="text-brand-dark font-semibold">{new Date(event.date).toLocaleDateString()}</span>
                   </div>
                   <div>
-                    <span className="block text-brand-mid font-medium text-xs uppercase tracking-wider mb-1">Location</span>
+                    <span className="block text-brand-mid font-medium text-[10px] uppercase tracking-wider mb-1">Location</span>
                     <span className="text-brand-dark font-semibold">{event.city}</span>
+                  </div>
+                  <div>
+                    <span className="block text-brand-mid font-medium text-[10px] uppercase tracking-wider mb-1">Entry</span>
+                    <span className="text-brand-black font-bold">{event.isFree ? 'FREE' : `₹${event.ticketPrice}`}</span>
                   </div>
                 </div>
 

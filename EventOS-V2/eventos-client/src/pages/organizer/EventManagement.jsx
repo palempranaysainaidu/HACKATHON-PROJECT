@@ -41,12 +41,12 @@ export default function EventManagement() {
   return (
     <div className="max-w-7xl mx-auto">
       {/* Header */}
-      <div className="bg-brand-white border border-brand-border rounded-xl p-6 mb-8 flex justify-between items-start">
+      <div className="bg-brand-card border border-brand-border rounded-xl p-6 mb-8 flex justify-between items-start">
         <div>
-          <h1 className="font-serif text-3xl font-bold text-brand-black">{event.name}</h1>
+          <h1 className="font-serif text-3xl font-bold text-brand-white">{event.name}</h1>
           <p className="font-sans text-brand-mid mt-1">{new Date(event.date).toLocaleDateString()} • {event.city}</p>
         </div>
-        <span className="bg-brand-info text-white text-xs font-semibold px-3 py-1 rounded-full uppercase tracking-wide">
+        <span className="bg-brand-info text-brand-bg text-xs font-semibold px-3 py-1 rounded-full uppercase tracking-wide">
           {event.status}
         </span>
       </div>
@@ -59,8 +59,8 @@ export default function EventManagement() {
             onClick={() => setActiveTab(tab)}
             className={`pb-3 font-sans text-sm font-medium capitalize whitespace-nowrap ${
               activeTab === tab 
-                ? 'text-brand-black border-b-2 border-brand-black' 
-                : 'text-brand-mid hover:text-brand-dark'
+                ? 'text-brand-white border-b-2 border-brand-accent' 
+                : 'text-brand-mid hover:text-brand-light'
             }`}
           >
             {tab}
@@ -69,26 +69,26 @@ export default function EventManagement() {
       </div>
 
       {/* Tab Content */}
-      <div className="bg-brand-white border border-brand-border rounded-xl p-8 min-h-[500px]">
+      <div className="bg-brand-card border border-brand-border rounded-xl p-8 min-h-[500px]">
         {activeTab === 'overview' && (
           <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-            <div className="p-6 bg-white border border-brand-border shadow-sm">
+            <div className="p-6 bg-brand-surface border border-brand-border border border-brand-border shadow-sm">
               <h3 className="text-xs font-bold text-brand-mid uppercase tracking-widest mb-2">Expected Audience</h3>
-              <p className="text-3xl font-serif font-black text-brand-black">{event.expectedAudience}</p>
+              <p className="text-3xl font-serif font-black text-brand-white">{event.expectedAudience}</p>
             </div>
-            <div className="p-6 bg-white border border-brand-border shadow-sm">
+            <div className="p-6 bg-brand-surface border border-brand-border border border-brand-border shadow-sm">
               <h3 className="text-xs font-bold text-brand-mid uppercase tracking-widest mb-2">Total Budget</h3>
-              <p className="text-3xl font-serif font-black text-brand-black">₹{event.totalBudget?.toLocaleString()}</p>
+              <p className="text-3xl font-serif font-black text-brand-white">₹{event.totalBudget?.toLocaleString()}</p>
             </div>
-            <div className="p-6 bg-white border border-brand-border shadow-sm">
+            <div className="p-6 bg-brand-surface border border-brand-border border border-brand-border shadow-sm">
               <h3 className="text-xs font-bold text-brand-mid uppercase tracking-widest mb-2">Volunteers</h3>
-              <p className="text-3xl font-serif font-black text-brand-black">{event.volunteersNeeded}</p>
+              <p className="text-3xl font-serif font-black text-brand-white">{event.volunteersNeeded}</p>
             </div>
             <div className="p-6 bg-brand-surface border border-brand-border shadow-sm flex flex-col justify-between">
               <h3 className="text-xs font-bold text-brand-mid uppercase tracking-widest mb-2">Ticket Price (INR)</h3>
               <div className="flex space-x-2 mt-2">
-                <input type="number" value={newPrice} onChange={e => setNewPrice(e.target.value)} className="w-full bg-white border border-brand-border px-3 py-2 text-lg font-bold font-sans outline-none focus:border-brand-black transition-colors" />
-                <button onClick={handleUpdatePrice} className="bg-brand-black text-white px-4 font-bold text-sm hover:bg-black transition-colors">Save</button>
+                <input type="number" value={newPrice} onChange={e => setNewPrice(e.target.value)} className="w-full bg-brand-surface border border-brand-border border border-brand-border px-3 py-2 text-lg font-bold font-sans outline-none focus:border-brand-accent transition-colors" />
+                <button onClick={handleUpdatePrice} className="bg-brand-accent hover:bg-brand-accentHov text-brand-bg px-4 font-bold text-sm  transition-colors">Save</button>
               </div>
             </div>
           </div>

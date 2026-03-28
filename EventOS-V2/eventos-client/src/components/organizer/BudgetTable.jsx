@@ -67,12 +67,12 @@ export default function BudgetTable({ eventId, expectedAudience, ticketPrice = 0
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
       <div className="lg:col-span-2">
         <div className="flex justify-between items-center mb-6">
-          <h2 className="font-serif text-2xl font-bold text-brand-black">Budget Planner</h2>
+          <h2 className="font-serif text-2xl font-bold text-brand-white">Budget Planner</h2>
           <div className="space-x-3">
              <button onClick={handleGenerateAI} className="border border-brand-accent text-brand-accent hover:bg-brand-surface font-sans font-medium px-4 py-2 rounded-full transition-colors text-sm">
                 ✨ Auto-Estimate
              </button>
-             <button onClick={() => { setEditingItemId(null); setNewItem({ category: 'venue', description: '', estimatedAmount: 0 }); setIsModalOpen(true); }} className="bg-brand-black hover:bg-black text-brand-white font-sans font-medium px-4 py-2 rounded-full transition-colors text-sm inline-flex items-center">
+             <button onClick={() => { setEditingItemId(null); setNewItem({ category: 'venue', description: '', estimatedAmount: 0 }); setIsModalOpen(true); }} className="bg-brand-accent hover:bg-brand-accentHov  text-brand-white font-sans font-medium px-4 py-2 rounded-full transition-colors text-sm inline-flex items-center">
                 <Plus className="w-4 h-4 mr-1" /> Add Line
              </button>
           </div>
@@ -93,22 +93,22 @@ export default function BudgetTable({ eventId, expectedAudience, ticketPrice = 0
               {items.length === 0 && <tr><td colSpan="5" className="px-6 py-8 text-center text-brand-mid">No budget items added.</td></tr>}
               {items.map(item => (
                 <tr key={item._id} className="hover:bg-brand-surface/50 transition-colors">
-                  <td className="px-6 py-4 font-medium text-brand-dark capitalize">{item.category.replace('_', ' ')}</td>
+                  <td className="px-6 py-4 font-medium text-brand-light capitalize">{item.category.replace('_', ' ')}</td>
                   <td className="px-6 py-4 text-brand-mid">{item.description}</td>
-                  <td className="px-6 py-4 text-brand-dark font-medium text-right">₹{item.estimatedAmount}</td>
+                  <td className="px-6 py-4 text-brand-light font-medium text-right">₹{item.estimatedAmount}</td>
                   <td className="px-6 py-4 text-center">
                     <button onClick={() => handleToggleVerify(item)} className="transition-colors group">
                       {item.isVerified ? (
                         <CheckCircle className="w-5 h-5 text-brand-accent mx-auto group-hover:text-brand-mid" />
                       ) : (
-                        <div className="text-xs border border-brand-border px-2 py-1 rounded group-hover:border-brand-black">Verify</div>
+                        <div className="text-xs border border-brand-border px-2 py-1 rounded group-hover:border-brand-accent">Verify</div>
                       )}
                     </button>
                   </td>
                   <td className="px-6 py-4 text-right space-x-3">
                     {!item.isVerified && (
                       <>
-                        <button onClick={() => { setEditingItemId(item._id); setNewItem({ category: item.category, description: item.description, estimatedAmount: item.estimatedAmount }); setIsModalOpen(true); }} className="text-brand-mid hover:text-brand-black font-sans text-xs underline uppercase tracking-widest font-bold">Edit</button>
+                        <button onClick={() => { setEditingItemId(item._id); setNewItem({ category: item.category, description: item.description, estimatedAmount: item.estimatedAmount }); setIsModalOpen(true); }} className="text-brand-mid hover:text-brand-white font-sans text-xs underline uppercase tracking-widest font-bold">Edit</button>
                         <button onClick={() => handleDelete(item._id)} className="text-brand-light hover:text-brand-error"><Trash2 className="w-4 h-4" /></button>
                       </>
                     )}
@@ -121,23 +121,23 @@ export default function BudgetTable({ eventId, expectedAudience, ticketPrice = 0
       </div>
 
       <div className="lg:col-span-1">
-        <div className="bg-brand-white border border-brand-border rounded-xl p-6 sticky top-24 shadow-sm">
-           <h3 className="font-serif text-xl font-bold text-brand-black mb-6 pb-4 border-b border-brand-border">Break-Even Calculator</h3>
+        <div className="bg-brand-card border border-brand-border rounded-xl p-6 sticky top-24 shadow-sm">
+           <h3 className="font-serif text-xl font-bold text-brand-white mb-6 pb-4 border-b border-brand-border">Break-Even Calculator</h3>
            
            <div className="space-y-4 mb-8">
              <div className="flex justify-between">
                 <span className="font-sans text-brand-mid">Total Expenses</span>
-                <span className="font-sans font-bold text-brand-black">₹{totalCalculated}</span>
+                <span className="font-sans font-bold text-brand-white">₹{totalCalculated}</span>
              </div>
              <div className="flex justify-between">
                 <span className="font-sans text-brand-mid">Expected Audience</span>
-                <span className="font-sans font-bold text-brand-black">{expectedAudience}</span>
+                <span className="font-sans font-bold text-brand-white">{expectedAudience}</span>
              </div>
            </div>
 
            <div className="bg-brand-surface rounded-lg p-5 border border-brand-border mb-6">
               <span className="block text-xs font-medium uppercase tracking-wide text-brand-mid mb-2">Min. Ticket Price to break even</span>
-              <span className="font-serif text-3xl font-bold text-brand-black">₹{minTicketPrice}</span>
+              <span className="font-serif text-3xl font-bold text-brand-white">₹{minTicketPrice}</span>
            </div>
 
            <div className={`rounded-lg p-5 border ${projectedProfit >= 0 ? 'bg-green-50 border-green-200' : 'bg-red-50 border-red-200'}`}>
@@ -151,13 +151,13 @@ export default function BudgetTable({ eventId, expectedAudience, ticketPrice = 0
       </div>
       
       {isModalOpen && (
-        <div className="fixed inset-0 bg-brand-black/50 flex items-center justify-center z-50">
-          <div className="bg-brand-white rounded-xl p-8 w-full max-w-md">
+        <div className="fixed inset-0 bg-brand-accent hover:bg-brand-accentHov/50 flex items-center justify-center z-50">
+          <div className="bg-brand-card rounded-xl p-8 w-full max-w-md">
             <h2 className="font-serif text-2xl font-bold mb-6">{editingItemId ? 'Edit Expense' : 'Add Expense'}</h2>
             <form onSubmit={handleSave} className="space-y-4">
               <div>
                 <label className="block text-xs font-medium uppercase tracking-wide text-brand-mid mb-1">Category</label>
-                <select value={newItem.category} onChange={e => setNewItem({...newItem, category: e.target.value})} className="w-full border border-brand-border rounded-lg px-4 py-2 font-sans bg-white">
+                <select value={newItem.category} onChange={e => setNewItem({...newItem, category: e.target.value})} className="w-full border border-brand-border rounded-lg px-4 py-2 font-sans bg-brand-surface border border-brand-border">
                    <option value="venue">Venue</option><option value="catering">Catering</option><option value="marketing">Marketing</option><option value="sound_av">Sound & AV</option>
                 </select>
               </div>
@@ -170,8 +170,8 @@ export default function BudgetTable({ eventId, expectedAudience, ticketPrice = 0
                 <input required type="number" value={newItem.estimatedAmount} onChange={e => setNewItem({...newItem, estimatedAmount: Number(e.target.value)})} className="w-full border border-brand-border rounded-lg px-4 py-2 font-sans" />
               </div>
               <div className="flex justify-end space-x-3 pt-6">
-                <button type="button" onClick={() => { setIsModalOpen(false); setEditingItemId(null); }} className="px-4 py-2 text-brand-dark font-sans font-medium">Cancel</button>
-                <button type="submit" className="bg-brand-black text-brand-white px-6 py-2 rounded-full font-sans font-medium">Save Item</button>
+                <button type="button" onClick={() => { setIsModalOpen(false); setEditingItemId(null); }} className="px-4 py-2 text-brand-light font-sans font-medium">Cancel</button>
+                <button type="submit" className="bg-brand-accent hover:bg-brand-accentHov text-brand-white px-6 py-2 rounded-full font-sans font-medium">Save Item</button>
               </div>
             </form>
           </div>

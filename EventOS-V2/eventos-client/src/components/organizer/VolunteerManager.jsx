@@ -30,8 +30,8 @@ export default function VolunteerManager({ eventId }) {
   return (
     <div className="space-y-6">
        <div className="flex justify-between items-center mb-6">
-          <h2 className="font-serif text-2xl font-bold text-brand-black">Volunteer Manifest</h2>
-          <span className="bg-brand-surface border border-brand-border text-brand-dark px-3 py-1 font-sans text-sm font-semibold">
+          <h2 className="font-serif text-2xl font-bold text-brand-white">Volunteer Manifest</h2>
+          <span className="bg-brand-surface border border-brand-border text-brand-light px-3 py-1 font-sans text-sm font-semibold">
              {applications.filter(a => a.status === 'accepted').length} Accepted
           </span>
        </div>
@@ -43,10 +43,10 @@ export default function VolunteerManager({ eventId }) {
        ) : (
          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {applications.map(app => (
-               <div key={app._id} className="border border-brand-border bg-white p-5 shadow-sm">
+               <div key={app._id} className="border border-brand-border bg-brand-surface border border-brand-border p-5 shadow-sm">
                  <div className="flex justify-between items-start mb-3">
                    <div>
-                     <h3 className="font-sans font-bold text-brand-black text-lg">{app.volunteerId?.name || 'Unknown User'}</h3>
+                     <h3 className="font-sans font-bold text-brand-white text-lg">{app.volunteerId?.name || 'Unknown User'}</h3>
                      <p className="text-sm text-brand-mid">{app.volunteerId?.email}</p>
                    </div>
                    <span className={`text-[10px] font-bold uppercase tracking-wider px-2 py-1 ${app.status==='accepted'?'bg-green-100 text-green-800':app.status==='rejected'?'bg-red-100 text-red-800':'bg-yellow-100 text-yellow-800'}`}>
@@ -55,8 +55,8 @@ export default function VolunteerManager({ eventId }) {
                  </div>
                  
                  <div className="mb-4 bg-brand-surface p-3 border border-brand-border text-sm font-sans space-y-2">
-                    <p><span className="font-bold text-brand-dark">Skills:</span> {app.skills}</p>
-                    <p><span className="font-bold text-brand-dark">Availability:</span> {app.availability}</p>
+                    <p><span className="font-bold text-brand-light">Skills:</span> {app.skills}</p>
+                    <p><span className="font-bold text-brand-light">Availability:</span> {app.availability}</p>
                     {app.resumeUrl && (
                       <a href={app.resumeUrl} target="_blank" rel="noreferrer" className="inline-flex items-center text-brand-info hover:underline mt-2">
                          <FileText className="w-4 h-4 mr-1"/> View Resume
@@ -66,7 +66,7 @@ export default function VolunteerManager({ eventId }) {
 
                  {app.status === 'pending' && (
                     <div className="flex space-x-2 border-t border-brand-border pt-4">
-                       <button onClick={() => handleAction(app._id, 'accept')} className="flex-1 bg-brand-black hover:bg-black text-white font-sans font-medium py-2 flex items-center justify-center transition-colors">
+                       <button onClick={() => handleAction(app._id, 'accept')} className="flex-1 bg-brand-accent hover:bg-brand-accentHov  text-brand-bg font-sans font-medium py-2 flex items-center justify-center transition-colors">
                           <Check className="w-4 h-4 mr-2" /> Accept
                        </button>
                        <button onClick={() => handleAction(app._id, 'reject')} className="flex-1 border border-brand-border hover:bg-red-50 text-red-600 font-sans font-medium py-2 flex items-center justify-center transition-colors">

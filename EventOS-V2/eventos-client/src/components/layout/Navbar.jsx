@@ -67,17 +67,20 @@ export default function Navbar() {
                       <ChevronDown className="w-3 h-3 text-brand-dim" />
                     </button>
 
-                    {/* Dropdown */}
-                    <div className="absolute right-0 top-full mt-2 w-44 glass-card rounded-xl overflow-hidden opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto transition-all duration-200 translate-y-1 group-hover:translate-y-0 shadow-modal">
-                      <Link to={`/${user.role}/dashboard`} className="flex items-center space-x-2.5 px-4 py-3 text-sm text-brand-light hover:text-brand-white hover:bg-white/5 font-sans transition-colors">
-                        <LayoutDashboard className="w-4 h-4" />
-                        <span>Dashboard</span>
-                      </Link>
-                      <div className="h-px bg-brand-border" />
-                      <button onClick={handleLogout} className="w-full flex items-center space-x-2.5 px-4 py-3 text-sm text-brand-error hover:bg-brand-error/10 font-sans transition-colors">
-                        <LogOut className="w-4 h-4" />
-                        <span>Sign Out</span>
-                      </button>
+                    {/* Dropdown Container (Includes bridge) */}
+                    <div className="absolute right-0 top-full pt-2 w-44 opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto transition-all duration-200 translate-y-1 group-hover:translate-y-0 z-50">
+                      {/* Actual Menu */}
+                      <div className="glass-card rounded-xl overflow-hidden shadow-modal">
+                        <Link to={`/${user.role}/dashboard`} className="flex items-center space-x-2.5 px-4 py-3 text-sm text-brand-light hover:text-brand-white hover:bg-white/5 font-sans transition-colors">
+                          <LayoutDashboard className="w-4 h-4" />
+                          <span>Dashboard</span>
+                        </Link>
+                        <div className="h-px bg-brand-border" />
+                        <button onClick={handleLogout} className="w-full flex items-center space-x-2.5 px-4 py-3 text-sm text-brand-error hover:bg-brand-error/10 font-sans transition-colors text-left">
+                          <LogOut className="w-4 h-4" />
+                          <span>Sign Out</span>
+                        </button>
+                      </div>
                     </div>
                   </div>
                 </>
